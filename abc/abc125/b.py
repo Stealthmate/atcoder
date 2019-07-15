@@ -1,0 +1,5 @@
+n = int(input())
+v = list(map(int, input().split(" ")))
+c = list(map(int, input().split(" ")))
+ans = sum(a - b for a,b in zip(v, c) if a > b)
+print(ans)
