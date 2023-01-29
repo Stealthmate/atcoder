@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+import glob
+import argparse
+import subprocess
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('PROBLEM', nargs=1)
+    parser.add_argument('TYPE', nargs=1)
+    args = parser.parse_args()
+    p = args.PROBLEM[0]
+    ft = args.TYPE[0]
+
+    tests = sorted(glob.glob(f'tests-{p}/*.i'))
+    for t in tests:
+        r = None
+        runner = None
+        if ft == 'py':
+            runner = ['python', f'{p}.py']
+        elif ft == 'cpp':
+            runner = f"g++ {p}.cpp -o {p} && ./{p}"
+        else:
+            print("Invalid type")
+            exit(1)
+
+        r = subprocess.run(f"{runner} < {t}", shell=True, capture_output=True)
+        o = open(t[:-1] + 'o').read()
+        result = r.stdout[:-1].decode('utf-8')
+
+        if o == result:
+            print(f"{t} - OK!")
+        else:
+            print(f"{t} - FAIL!")
+            print(r.stdout.decode('utf-8'))
+            print(r.stderr.decode('utf-8'))
